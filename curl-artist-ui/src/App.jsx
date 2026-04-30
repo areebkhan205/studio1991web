@@ -1,12 +1,11 @@
 import {
   CheckCircle,
   Menu,
-  Quote,
   Scissors
 } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
-import vid1 from "./assets/1.mp4";
+import React, { useCallback, useEffect, useState } from 'react';
 import { FaWhatsapp } from "react-icons/fa";
+import vid1 from "./assets/1.mp4";
 import vid2 from "./assets/2.mp4";
 import vid3 from "./assets/3.mp4";
 import vid4 from "./assets/4.mp4";
@@ -15,6 +14,7 @@ import vid6 from "./assets/6.mp4";
 import vid7 from "./assets/7.mp4";
 import vid8 from "./assets/8.mp4";
 import vid9 from "./assets/9.mp4";
+import bg from "./assets/bg.avif";
 import hair1 from "./assets/hair1.jpg";
 import hair10 from "./assets/hair10.jpg";
 import hair2 from "./assets/hair2.jpg";
@@ -25,11 +25,9 @@ import hair6 from "./assets/hair6.jpg";
 import hair7 from "./assets/hair7.jpg";
 import hair8 from "./assets/hair8.jpg";
 import hair9 from "./assets/hair9.jpg";
-import bg from "./assets/bg.avif"
 import ubaid from "./assets/ubaid.jpeg";
 import TextType from './TextType';
 import VoicesSection from './VoicesSection';
-
 const InstagramIcon = ({ className }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -38,40 +36,130 @@ const InstagramIcon = ({ className }) => (
   </svg>
 );
 
+const SmartVideo = ({ src }) => {
+  const ref = React.useRef(null);
 
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!ref.current) return;
+
+        if (entry.isIntersecting) {
+          ref.current.play().catch(() => {});
+        } else {
+          ref.current.pause();
+        }
+      },
+      { threshold: 0.6 }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <video
+      ref={ref}
+      src={src}
+      className="w-full h-full object-cover"
+      muted
+      loop
+      playsInline
+      preload="metadata"
+    />
+  );
+};
 
 const Navbar = ({ currentView, setCurrentView, isAdmin, isMenuOpen, setIsMenuOpen }) => (
-  <nav className="fixed md:left-16 top-0 z-[100] w-full bg-white/95 backdrop-blur-md border-b border-stone-100">
-    <div className="max-w-7xl mx-auto px-4 h-24 grid grid-cols-3 items-center">
+ <nav className="fixed md:left-16 top-0 z-[100] w-full bg-white/95 backdrop-blur-md border-b border-stone-100">
+  <div className="max-w-7xl mx-auto px-4 h-24 grid grid-cols-3 items-center">
+    
+    <div className="hidden md:flex items-center gap-8 justify-start">
       
-      <div className="hidden md:flex items-center gap-8 justify-start">
-        <button onClick={() => {setCurrentView('home'); window.scrollTo({top: 0, behavior: 'smooth'});}} className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-all hover:text-amber-600 ${currentView === 'home' ? 'text-stone-900' : 'text-stone-400'}`}>Gallery</button>
+      <button 
+        onClick={() => {setCurrentView('home'); window.scrollTo({top: 0, behavior: 'smooth'});}} 
+        className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-all hover:text-amber-600 ${currentView === 'home' ? 'text-stone-900' : 'text-stone-400'}`}
+      >
+        Gallery
+      </button>
 
+      {/* Prices Dropdown (CSS only) */}
+      <div className="relative group">
+        <button className="text-[10px] font-bold uppercase tracking-[0.3em] text-stone-400 hover:text-amber-600">
+          Prices
+        </button>
+
+        <div className="absolute top-6 left-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-white border border-stone-100 shadow-xl p-5 w-64 space-y-3 text-[10px] uppercase tracking-[0.2em]">
+          <p className="text-stone-600">Haircut — ₹2000 (wash + styling)</p>
+          <p className="text-stone-600">Global Colour — ₹6000 onward</p>
+          <p className="text-stone-600">Balayage / Highlights — ₹8000 onward</p>
+          <p className="text-stone-600">Protein Treatment — ₹6000 onward</p>
+        </div>
       </div>
 
-      <div className="flex flex-col relative  md:right-20  text-center cursor-pointer justify-center col-span-2 md:col-span-1" onClick={() => {setCurrentView('home'); window.scrollTo({top: 0, behavior: 'smooth'});}}>
-        <span className="text-lg md:text-2xl font-serif tracking-[0.3em] text-stone-900 leading-none uppercase">STUDIO1999</span>
-        <span className="text-[9px] font-bold text-amber-600 tracking-[0.5em] mt-2 uppercase">BYUBAID</span>
-      </div>
-
-      <div className="hidden md:flex items-center gap-8 justify-end">
-        <a href="https://www.instagram.com/hairtransformation_78" target="_blank" rel="noreferrer" className="text-stone-400 hover:text-stone-900 transition-colors">
-           <InstagramIcon className="w-5 h-5" />
-        </a>
-      </div>
-
-      <div className="md:hidden flex items-center justify-end">
-        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-stone-900 p-2"><Menu className="w-6 h-6" /></button>
-      </div>
     </div>
 
-    {isMenuOpen && (
-      <div className="md:hidden bg-white border-b border-stone-100 p-8 flex flex-col items-center gap-6 text-center animate-in slide-in-from-top-2">
-        <button onClick={() => {setCurrentView('home'); setIsMenuOpen(false);}} className="text-[10px] font-bold uppercase tracking-[0.3em]">Gallery</button>
-        <a href="https://www.instagram.com/hairtransformation_78" className="text-[10px] font-bold uppercase tracking-[0.3em] text-amber-600">Instagram</a>
+    <div 
+      className="flex flex-col relative md:right-20 text-center cursor-pointer justify-center col-span-2 md:col-span-1" 
+      onClick={() => {setCurrentView('home'); window.scrollTo({top: 0, behavior: 'smooth'});}}
+    >
+      <span className="text-lg md:text-2xl font-serif tracking-[0.3em] text-stone-900 leading-none uppercase">
+        STUDIO1999
+      </span>
+      <span className="text-[9px] font-bold text-amber-600 tracking-[0.5em] mt-2 uppercase">
+        BYUBAID
+      </span>
+    </div>
+
+    <div className="hidden md:flex items-center gap-8 justify-end">
+      <a 
+        href="https://www.instagram.com/hairtransformation_78" 
+        target="_blank" 
+        rel="noreferrer" 
+        className="text-stone-400 hover:text-stone-900 transition-colors"
+      >
+        <InstagramIcon className="w-5 h-5" />
+      </a>
+    </div>
+
+    <div className="md:hidden flex items-center justify-end">
+      <button 
+        onClick={() => setIsMenuOpen(!isMenuOpen)} 
+        className="text-stone-900 p-2"
+      >
+        <Menu className="w-6 h-6" />
+      </button>
+    </div>
+  </div>
+
+  {isMenuOpen && (
+    <div className="md:hidden bg-white border-b border-stone-100 p-8 flex flex-col items-center gap-6 text-center animate-in slide-in-from-top-2">
+      
+      <button 
+        onClick={() => {setCurrentView('home'); setIsMenuOpen(false);}} 
+        className="text-[10px] font-bold uppercase tracking-[0.3em]"
+      >
+        Gallery
+      </button>
+
+      {/* Prices for mobile */}
+      <div className="text-[10px] uppercase tracking-[0.3em] text-stone-600 space-y-2">
+        <p>Haircut — ₹2000</p>
+        <p>Global Colour — ₹6000+</p>
+        <p>Balayage / Highlights — ₹8000+</p>
+        <p>Protein Treatment — ₹6000+</p>
       </div>
-    )}
-  </nav>
+
+      <a 
+        href="https://www.instagram.com/hairtransformation_78" 
+        className="text-[10px] font-bold uppercase tracking-[0.3em] text-amber-600"
+      >
+        Instagram
+      </a>
+    </div>
+  )}
+</nav>
 );
 
 const HomeView = ({ services, reviews, setView, onAddReview }) => {
@@ -176,99 +264,99 @@ const HomeView = ({ services, reviews, setView, onAddReview }) => {
     <div className="relative grid grid-cols-1 md:grid-cols-4 gap-x-17 gap-y-20 w-full">
 
       {/* CARD 1 */}
-      <div className="group cursor-pointer flex flex-col items-center text-center" onClick={() => setView("book")}>
-        <div className="aspect-[3/4] w-full overflow-hidden mb-10 bg-stone-100 rounded-3xl shadow-sm">
-          <img src={hair1} className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
+      <div className="group cursor-pointer flex flex-col items-center text-center" >
+        <div className="aspect-[3/4] w-full overflow-hidden mb-10 md:bg-stone-100 rounded-3xl md:shadow-sm">
+          <img src={hair1} className="w-full h-full object-cover md:grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
         </div>
         <span className="text-[9px] font-bold text-amber-600 uppercase tracking-[0.4em] mb-4">Hair Service</span>
         <h3 className="text-2xl md:text-3xl font-serif mb-6 text-stone-900">Mushroom Brown Moneypeace Hair Color</h3>
       </div>
 
       {/* CARD 2 */}
-      <div className="group cursor-pointer flex flex-col items-center text-center" onClick={() => setView("book")}>
+      <div className="group cursor-pointer flex flex-col items-center text-center" >
         <div className="aspect-[3/4] w-full overflow-hidden mb-10 bg-stone-100 rounded-3xl shadow-sm">
-          <img src={hair2} className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
+          <img src={hair2} className="w-full h-full object-cover md:grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
         </div>
         <span className="text-[9px] font-bold text-amber-600 uppercase tracking-[0.4em] mb-4">Hair Service</span>
         <h3 className="text-2xl md:text-3xl font-serif mb-6 text-stone-900">Matt,Violet,Beige Brown </h3>
       </div>
 
       {/* CARD 3 */}
-      <div className="group cursor-pointer flex flex-col items-center text-center" onClick={() => setView("book")}>
+      <div className="group cursor-pointer flex flex-col items-center text-center" >
         <div className="aspect-[3/4] w-full overflow-hidden mb-10 bg-stone-100 rounded-3xl shadow-sm">
-          <img src={hair3} className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
+          <img src={hair3} className="w-full h-full object-cover md:grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
         </div>
         <span className="text-[9px] font-bold text-amber-600 uppercase tracking-[0.4em] mb-4">Hair Service</span>
         <h3 className="text-2xl md:text-3xl font-serif mb-6 text-stone-900">Matt blond highlight </h3>
       </div>
 
       {/* CARD 4 */}
-      <div className="group cursor-pointer flex flex-col items-center text-center" onClick={() => setView("book")}>
+      <div className="group cursor-pointer flex flex-col items-center text-center" >
         <div className="aspect-[3/4] w-full overflow-hidden mb-10 bg-stone-100 rounded-3xl shadow-sm">
-          <img src={hair4} className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
+          <img src={hair4} className="w-full h-full object-cover md:grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
         </div>
         <span className="text-[9px] font-bold text-amber-600 uppercase tracking-[0.4em] mb-4">Hair Service</span>
         <h3 className="text-2xl md:text-3xl font-serif mb-6 text-stone-900"> Smokey Ash Hair Color</h3>
       </div>
 
       {/* CARD 5 */}
-      <div className="group cursor-pointer flex flex-col items-center text-center" onClick={() => setView("book")}>
+      <div className="group cursor-pointer flex flex-col items-center text-center" >
         <div className="aspect-[3/4] w-full overflow-hidden mb-10 bg-stone-100 rounded-3xl shadow-sm">
-          <img src={hair5} className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
+          <img src={hair5} className="w-full h-full object-cover md:grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
         </div>
         <span className="text-[9px] font-bold text-amber-600 uppercase tracking-[0.4em] mb-4">Hair Service</span>
         <h3 className="text-2xl md:text-3xl font-serif mb-6 text-stone-900">Violet Omre</h3>
       </div>
 
       {/* CARD 6 */}
-      <div className="group cursor-pointer flex flex-col items-center text-center" onClick={() => setView("book")}>
+      <div className="group cursor-pointer flex flex-col items-center text-center" >
         <div className="aspect-[3/4] w-full overflow-hidden mb-10 bg-stone-100 rounded-3xl shadow-sm">
-          <img src={hair6} className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
+          <img src={hair6} className="w-full h-full object-cover md:grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
         </div>
         <span className="text-[9px] font-bold text-amber-600 uppercase tracking-[0.4em] mb-4">Hair Service</span>
         <h3 className="text-2xl md:text-3xl font-serif mb-6 text-stone-900"> Red,Brown,Mocha,Magenta Red</h3>
       </div>
 
       {/* CARD 7 */}
-      <div className="group cursor-pointer flex flex-col items-center text-center" onClick={() => setView("book")}>
+      <div className="group cursor-pointer flex flex-col items-center text-center" >
         <div className="aspect-[3/4] w-full overflow-hidden mb-10 bg-stone-100 rounded-3xl shadow-sm">
-          <img src={hair7} className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
+          <img src={hair7} className="w-full h-full object-cover md:grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
         </div>
         <span className="text-[9px] font-bold text-amber-600 uppercase tracking-[0.4em] mb-4">Hair Service</span>
         <h3 className="text-2xl md:text-3xl font-serif mb-6 text-stone-900">Balayage Violet</h3>
       </div>
 
       {/* CARD 8 */}
-      <div className="group cursor-pointer flex flex-col items-center text-center" onClick={() => setView("book")}>
+      <div className="group cursor-pointer flex flex-col items-center text-center" >
         <div className="aspect-[3/4] w-full overflow-hidden mb-10 bg-stone-100 rounded-3xl shadow-sm">
-          <img src={hair8} className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
+          <img src={hair8} className="w-full h-full object-cover md:grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
         </div>
         <span className="text-[9px] font-bold text-amber-600 uppercase tracking-[0.4em] mb-4">Hair Service</span>
         <h3 className="text-2xl md:text-3xl font-serif mb-6 text-stone-900">Beige Blond Highlight</h3>
       </div>
 
       {/* CARD 9 */}
-      <div className="group cursor-pointer flex flex-col items-center text-center" onClick={() => setView("book")}>
+      <div className="group cursor-pointer flex flex-col items-center text-center" >
         <div className="aspect-[3/4] w-full overflow-hidden mb-10 bg-stone-100 rounded-3xl shadow-sm">
-          <img src={hair9} className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
+          <img src={hair9} className="w-full h-full object-cover md:grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
         </div>
         <span className="text-[9px] font-bold text-amber-600 uppercase tracking-[0.4em] mb-4">Hair Service</span>
         <h3 className="text-2xl md:text-3xl font-serif mb-6 text-stone-900">Beige Choclate Brown</h3>
       </div>
 
       {/* CARD 10 */}
-      <div className="group cursor-pointer flex flex-col items-center text-center" onClick={() => setView("book")}>
+      <div className="group cursor-pointer flex flex-col items-center text-center" >
         <div className="aspect-[3/4] w-full overflow-hidden mb-10 bg-stone-100 rounded-3xl shadow-sm">
-          <img src={hair10} className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
+          <img src={hair10} className="w-full h-full object-cover md:grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
         </div>
         <span className="text-[9px] font-bold text-amber-600 uppercase tracking-[0.4em] mb-4">Hair Service</span>
         <h3 className="text-2xl md:text-3xl font-serif mb-6 text-stone-900">Beige Brown</h3>
       </div>
 
       {/* CARD 11 */}
-      <div className="group cursor-pointer flex flex-col items-center text-center" onClick={() => setView("book")}>
+      <div className="group cursor-pointer flex flex-col items-center text-center" >
         <div className="aspect-[3/4] w-full overflow-hidden mb-10 bg-stone-100 rounded-3xl shadow-sm">
-          <img src={hair1} className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
+          <img src={hair1} className="w-full h-full object-cover md:grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
         </div>
         <span className="text-[9px] font-bold text-amber-600 uppercase tracking-[0.4em] mb-4">Hair Service</span>
         <h3 className="text-2xl md:text-3xl font-serif mb-6 text-stone-900">Mushroom Brown</h3>
@@ -278,6 +366,7 @@ const HomeView = ({ services, reviews, setView, onAddReview }) => {
 
     </div>
   </div>
+
 
 </section>
 
@@ -296,25 +385,18 @@ const HomeView = ({ services, reviews, setView, onAddReview }) => {
   </h2>
 
   {/* VIDEOS GRID */}
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full max-w-6xl px-4 sm:px-6">
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full max-w-6xl px-4 sm:px-6">
 
-    {[vid1, vid2, vid3, vid4, vid5,vid6,vid7,vid8,vid9].map((video, i) => (
-      <div
-        key={i}
-        className="w-full aspect-[9/16] rounded-3xl overflow-hidden shadow-xl bg-stone-900 relative border border-white/5 group hover:border-amber-500/30 transition-all"
-      >
-        <video
-          src={video}
-          className="w-full h-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-        />
-      </div>
-    ))}
+  {[vid1, vid2, vid3, vid4, vid5, vid6, vid7, vid8, vid9].map((video, i) => (
+    <div
+      key={i}
+      className="w-full aspect-[9/16] rounded-3xl overflow-hidden shadow-xl bg-stone-900 relative border border-white/5 group hover:border-amber-500/30 transition-all"
+    >
+      <SmartVideo src={video} />
+    </div>
+  ))}
 
-  </div>
+</div>
 
   <a
     href="https://www.instagram.com/hairtransformation_78"

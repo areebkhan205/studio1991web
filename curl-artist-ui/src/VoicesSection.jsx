@@ -1,12 +1,12 @@
-import { useState } from "react";
 import { Quote } from "lucide-react";
+import { useState } from "react";
 
 export default function VoicesSection() {
 
   const [reviews, setReviews] = useState([
     {
-      name: "Aarav",
-      text: "Clean fade and perfect detailing. Loved it."
+      name: "Anaya",
+      text: "Absolutely loved the styling and attention to detail. The look turned out perfect!"
     }
   ]);
 
